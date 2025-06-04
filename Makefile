@@ -1,12 +1,12 @@
-CC ?= gcc
+CC ?= zig cc
 LIB = lib
-EXE = bin/ordem
+EXE = bin/lis
 
 $(EXE): $(LIB)/mergesort.o $(LIB)/lis.o $(LIB)/array.o
-	$(CC) -g -o $@ $^
+	$(CC) -g -o $@ $^ -lm -g
 
 $(LIB)/%.o: %.c
-	$(CC) -g -c -o $@ $<
+	$(CC) -g -c -o $@ $< -g
 
 run:
 	./$(EXE)
