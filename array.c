@@ -48,7 +48,10 @@ Array *Array_copy(Array *og)
 		array->capacity = og->capacity;
 		array->len = og->len;
 		array->items = calloc(og->capacity, sizeof(Item));
-		memcpy(array, og, array->len * sizeof(Item));
+		for (size_t i = 0; i < og->len; i++)
+		{
+			Array_append(array, og->items[i].val, og->items[i].pos);
+		}
 	}
 	return array;
 }

@@ -1,5 +1,20 @@
 import math
 
+def bin_search(X: list, start, end, value):
+	if end - start <= 1:
+		return  X[start] if X[start][0] < value else None
+	
+	half = (end - start) / 2
+	l = bin_search(X, start, start + half, value)
+	r = bin_search(X, start + half + 1, end, value)
+	if l == None:
+		return r
+	elif r == None:
+		return l
+	else:
+		return r
+
+
 def merge(arr, l, m, r):
 	n1 = m - l + 1
 	n2 = r - m
@@ -58,36 +73,34 @@ def mergeSort(arr, l, r):
 		mergeSort(arr, m+1, r)
 		merge(arr, l, m, r)
 
-def divide_lis(X: list, i, j, pred):
+def divide_lis(X: list, i, j, pred, is_present, Knuth, Xsorted):
 	if i == j:
 		pred[i] = 0
 	elif j > i:
 		n = j - i + 1
 		x = math.floor((j - i + 1) / 2.0)
-		Xsorted = X.copy()
-		mergeSort(Xsorted, 0, len(Xsorted) - 1)
-		m_e = Xsorted[i + x].val
+		m_e = Xsorted[i + x][0]
 		Y1 = []
 		Y2 = []
 		for k in range(0,n):
-			if X[k] < m_e:
+			if X[k][0] < m_e:
 				Y1.append(X[k])
 			else:
 				Y2.append(X[k])
-		divide_lis(Y1, i, i + x - 1, pred)
-		divide_lis(Y2, x + i, j, pred)
-		combine_lis(X, i, j, m_e, pred)
+		divide_lis(Y1, i, i + x - 1, pred, is_present, Knuth, Xsorted)
+		divide_lis(Y2, x + i, j, pred, is_present, Knuth, Xsorted)
+		combine_lis(X, i, j, m_e, pred, is_present, Knuth)
 
-def combine_lis(X, i, j, m_e, pred):
-	max_ind = 0, max_len = 0, longest_LIS_len = 0
+def combine_lis(X, i, j, m_e, pred, is_present, Knuth):
+	max_ind = 0
+	max_len = 0
+	longest_LIS_len = 0
 	n = j - i + 1
-	Knuth = []
-	Knuth.append( 0, 0)
-	int *is_present = []
+	Knuth[0] = (0, 0)
 	for r in range(0, n):
-		k = pred[X[r].pos]
+		k = pred[X[r][1]]
 		j = is_present[k]
-		if X[r].val <= m_e:
+		if X[r][0] <= m_e:
 			if (longest_LIS_len <= j + 1):
 				longest_LIS_len = j + 1
 		else:
@@ -95,13 +108,22 @@ def combine_lis(X, i, j, m_e, pred):
 				j = longest_LIS_len
 			else:
 				if j == 0:
-					Item *p = bin_search(X, longest_LIS_len, max_len, X->items[r].val)
-					j = p->pos
-		is_present[Knuthitems[j + 1].pos] = 0
-		pred[X[r].pos] = Knuth[j].pos
-		Knuth[j + 1].val = X[r].val
-		Knuth[j + 1].pos = X[r].pos
-		is_present[Xitems[r].pos] = j + 1
+					p = bin_search(X, longest_LIS_len, max_len, X[r][0])
+					j = p[1]
+		is_present[Knuth[j + 1][1]] = 0
+		pred[X[r][1]] = Knuth[j][1]
+		Knuth[j + 1] = (X[r][0], X[r][1])
+		is_present[X[r][1]] = j + 1
 		if max_len <= j + 1:
-			max_ind = X[r].pos
+			max_ind = X[r][1]
 			max_len = j + 1
+
+
+X = [(8, 1),(9, 2),(5, 3),(2, 4),(3, 5),(7, 6),(10, 7),(4, 8),(1, 9),(6, 10)]
+pred = [0] * (len(X) + 1)
+is_present = [0] * (len(X) + 1)
+Knuth = [(0, 0)] * (len(X) + 1)
+Xsorted = X.copy()
+mergeSort(Xsorted, 0, len(Xsorted) - 1)
+divide_lis(X, 0, len(X) - 1, pred, is_present, Knuth, Xsorted)
+print(Knuth)

@@ -91,7 +91,7 @@ void divide_lis(Array *X, int i, int j, int *pred)
 		int n = j - i + 1;
 		int x = (int) floor((j - i + 1) / 2.0);
 		Array *Xsorted = Array_copy(X);
-		// qsort(Xsorted->items, X->len - 1, sizeof(Item), (__compar_fn_t) &compare);
+		qsort(Xsorted->items, X->len, sizeof(Item), (__compar_fn_t) &compare);
 		int m_e = Xsorted->items[i + x].val;
 		Array *Y1 = Array_new();
 		Array *Y2 = Array_new();
