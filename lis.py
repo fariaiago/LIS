@@ -75,7 +75,7 @@ def mergeSort(arr, l, r):
 
 def divide_lis(X: list, i, j, pred, is_present, Knuth, Xsorted):
 	if i == j:
-		pred[i] = 0
+		pred[X[0][1]] = 0
 	elif j > i:
 		n = j - i + 1
 		x = math.floor((j - i + 1) / 2.0)
@@ -91,16 +91,17 @@ def divide_lis(X: list, i, j, pred, is_present, Knuth, Xsorted):
 		divide_lis(Y2, x + i, j, pred, is_present, Knuth, Xsorted)
 		combine_lis(X, i, j, m_e, pred, is_present, Knuth)
 
-def combine_lis(X, i, j, m_e, pred, is_present, Knuth):
+def combine_lis(X, i, j, m_e, pred, is_present, Knuth: list):
 	max_ind = 0
 	max_len = 0
 	longest_LIS_len = 0
 	n = j - i + 1
-	Knuth[0] = (0, 0)
+	if len(Knuth) == 0:
+		Knuth.append((0, 0))
 	for r in range(0, n):
 		k = pred[X[r][1]]
 		j = is_present[k]
-		if X[r][0] <= m_e:
+		if X[r][0] < m_e:
 			if (longest_LIS_len <= j + 1):
 				longest_LIS_len = j + 1
 		else:
@@ -110,6 +111,8 @@ def combine_lis(X, i, j, m_e, pred, is_present, Knuth):
 				if j == 0:
 					p = bin_search(X, longest_LIS_len, max_len, X[r][0])
 					j = p[1]
+		if len(Knuth) == j + 1:
+			Knuth.append((X[r][0], X[r][1]))
 		is_present[Knuth[j + 1][1]] = 0
 		pred[X[r][1]] = Knuth[j][1]
 		Knuth[j + 1] = (X[r][0], X[r][1])
@@ -120,9 +123,9 @@ def combine_lis(X, i, j, m_e, pred, is_present, Knuth):
 
 
 X = [(8, 1),(9, 2),(5, 3),(2, 4),(3, 5),(7, 6),(10, 7),(4, 8),(1, 9),(6, 10)]
-pred = [0] * (len(X) + 1)
+pred = [None] * (len(X) + 1)
 is_present = [0] * (len(X) + 1)
-Knuth = [(0, 0)] * (len(X) + 1)
+Knuth = []
 Xsorted = X.copy()
 mergeSort(Xsorted, 0, len(Xsorted) - 1)
 divide_lis(X, 0, len(X) - 1, pred, is_present, Knuth, Xsorted)
